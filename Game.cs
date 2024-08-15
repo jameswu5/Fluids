@@ -6,14 +6,11 @@ namespace Fluids;
 
 public class Game
 {
-    public readonly Rectangle container;
-    public List<Particle> particles;
+    public Container container;
 
     public Game()
     {
-        container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth, ContainerHeight);
-        particles = new();
-        particles.Add(new(new(100, 100), new(0, 0), 10));
+        container = new(25);
     }
 
     public void Run()
@@ -32,17 +29,8 @@ public class Game
         Raylib.CloseWindow();
     }
 
-    public void Update()
+    private void Update()
     {
-        DisplayContainer();
-        foreach (Particle particle in particles)
-        {
-            particle.Update();
-        }
-    }
-
-    private void DisplayContainer()
-    {
-        Raylib.DrawRectangleLinesEx(container, 5, White);
+        container.Update();
     }
 }
