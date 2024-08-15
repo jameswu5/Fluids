@@ -21,10 +21,37 @@ public class Particle
     {
         velocity -= Vector2.UnitY * Settings.Gravity;
         position += velocity * Raylib.GetFrameTime();
+        ResolveCollisions();
+        Draw();
     }
 
-    public void Draw()
+    private void Draw()
     {
         Raylib.DrawCircleV(position, radius, Settings.White);
+    }
+
+    private void ResolveCollisions()
+    {
+        if (position.X - radius < Settings.ContainerBounds[0])
+        {
+            position.X = Settings.ContainerBounds[0] + radius;
+            velocity.X *= -1;
+        }
+        else if (position.X + radius > Settings.ContainerBounds[1])
+        {
+            position.X = Settings.ContainerBounds[1] - radius;
+            velocity.X *= -1;
+        }
+
+        if (position.Y - radius < Settings.ContainerBounds[2])
+        {
+            position.Y = Settings.ContainerBounds[2] + radius;
+            velocity.Y *= -1;
+        }
+        else if (position.Y + radius > Settings.ContainerBounds[3])
+        {
+            position.Y = Settings.ContainerBounds[3] - radius;
+            velocity.Y *= -1;
+        }
     }
 }
