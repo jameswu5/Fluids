@@ -10,7 +10,7 @@ public class Game
 
     public Game()
     {
-        container = new(25);
+        container = new(100);
     }
 
     public void Run()

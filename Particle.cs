@@ -18,20 +18,12 @@ public class Particle
         this.density = 0; // need to repopulate in runtime
     }
 
-    public void Update()
-    {
-        velocity -= Vector2.UnitY * Gravity;
-        position += velocity * FrameTime;
-        ResolveCollisions();
-        Draw();
-    }
-
-    private void Draw()
+    public void Draw()
     {
         Raylib.DrawCircleV(position, ParticleRadius, White);
     }
 
-    private void ResolveCollisions()
+    public void ResolveCollisions()
     {
         if (position.X - ParticleRadius < ContainerBounds[0])
         {

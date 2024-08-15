@@ -9,13 +9,15 @@ public class Container
 {
     public readonly Rectangle container;
     public List<Particle> particles;
+    public int ParticleCount;
 
     public Random random;
 
     public const float SmoothingRadius = 100;
     public const float RestDensity = 1f;
-    public const float GasConstant = 100;
+    public const float GasConstant = 2f;
     public const float Mass = 1f;
+    public static readonly Vector2 Gravity = new(0, Settings.Gravity);
 
     public static readonly IKernel kernel = new Polynomial();
 
@@ -23,7 +25,8 @@ public class Container
     {
         random = new();
         container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth, ContainerHeight);
-        particles = CreateParticles(particleCount);
+        ParticleCount = particleCount;
+        particles = CreateParticles(ParticleCount);
     }
 
     private static List<Particle> CreateParticles(int count, int spacing = 20)
@@ -51,34 +54,67 @@ public class Container
 
     public void Update()
     {
-        UpdateParticleVelocities();
+        Step();
+        Display();
+    }
 
+    private void Display()
+    {
+        // Display container
+        Raylib.DrawRectangleLinesEx(container, 5, White);
+
+        // Draw particles
         foreach (Particle particle in particles)
         {
-            particle.Update();
+            particle.Draw();
         }
-
-        DisplayContainer();
     }
 
-    private void DisplayContainer()
+    private void Step()
     {
-        Raylib.DrawRectangleLinesEx(container, 5, White);
-    }
-
-    private void UpdateParticleVelocities()
-    {
-        Parallel.For(0, particles.Count, i =>
+        // Precompute particle densities
+        Parallel.For(0, ParticleCount, i =>
         {
-            Particle particle = particles[i];
-            Vector2 acceleration = CalculateAcceleration(i);
-            particle.velocity += acceleration * FrameTime;
+            particles[i].density = CalculateDensity(i);
+        });
+
+        // Update particle forces
+        Parallel.For(0, ParticleCount, i =>
+        {
+            Vector2 force = CalculateResultantForce(i);
+            particles[i].velocity += force * FrameTime / particles[i].density;
+        });
+
+        // Update particle positions
+        Parallel.For(0, ParticleCount, i =>
+        {
+            particles[i].position += particles[i].velocity * FrameTime;
+            particles[i].ResolveCollisions();
         });
     }
 
-    private Vector2 CalculateAcceleration(int particleIndex)
+    private float CalculateDensity(int particleIndex)
     {
-        throw new NotImplementedException();   
+        float density = 0f;
+        for (int i = 0; i < particles.Count; i++)
+        {
+            Vector2 diff = particles[i].position - particles[particleIndex].position;
+            float distance = diff.Length();
+            density += Mass * kernel.Evaluate(distance, SmoothingRadius);
+        }
+        return density;
+    }
+
+    private Vector2 CalculateResultantForce(int particleIndex)
+    {
+        Vector2 force = Vector2.Zero;
+
+        // Pressure
+        force += CalculatePressureForce(particleIndex);
+        // Gravity
+        force += particles[particleIndex].density * Gravity;
+
+        return force;
     }
 
     private Vector2 CalculatePressureForce(int particleIndex)
@@ -98,7 +134,7 @@ public class Container
             pressureForce += pressure * gradient * Mass / particles[i].density;
 
         }
-        return pressureForce;
+        return -pressureForce;
     }
 
     private Vector2 GetRandomDirection()
