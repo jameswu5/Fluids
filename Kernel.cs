@@ -27,6 +27,6 @@ public class Polynomial : IKernel
             return 0;
         }
 
-        return -945f / (32f * MathF.PI * MathF.Pow(radius, 9)) * distance * distance * (radius * radius - distance * distance) * (3 * radius * radius - 7 * distance * distance);
+        return -945f / (32f * MathF.PI * MathF.Pow(radius, 9)) * distance * MathF.Pow(radius * radius - distance * distance, 2);
     }
 }
