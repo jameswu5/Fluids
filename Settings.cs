@@ -11,4 +11,7 @@ public class Settings
     public const int FrameRate = 60;
 
     public static readonly Color Black = new(0, 0, 0, 255);
+    public static readonly Color White = new(255, 255, 255, 255);
+
+    public const float Gravity = -9.81f;
 }
