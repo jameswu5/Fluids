@@ -10,11 +10,18 @@ public class Container
     public readonly Rectangle container;
     public List<Particle> particles;
 
+    public Random random;
+
+    public const float SmoothingRadius = 100;
     public const float RestDensity = 1f;
     public const float GasConstant = 100;
+    public const float Mass = 1f;
+
+    public static readonly IKernel kernel = new Polynomial();
 
     public Container(int particleCount)
     {
+        random = new();
         container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth, ContainerHeight);
         particles = CreateParticles(particleCount);
     }
@@ -74,19 +81,34 @@ public class Container
         throw new NotImplementedException();   
     }
 
-    private float CalculateDensity(int particleIndex)
+    private Vector2 CalculatePressureForce(int particleIndex)
     {
-        throw new NotImplementedException();
+        // this is the pressure component -∇(p) of the Navier-Stokes equation
+
+        Vector2 pressureForce = Vector2.Zero;
+        for (int i = 0; i < particles.Count; i++)
+        {
+            if (particleIndex == i) continue;
+
+            Vector2 diff = particles[i].position - particles[particleIndex].position;
+            float distance = diff.Length();
+            Vector2 direction = distance == 0 ? GetRandomDirection() : diff / distance; // create random vector instead
+            Vector2 gradient = kernel.Derivative(distance, SmoothingRadius) * direction;
+            float pressure = (CalculatePressureFromDensity(particles[i].density) + CalculatePressureFromDensity(particles[particleIndex].density)) / 2;
+            pressureForce += pressure * gradient * Mass / particles[i].density;
+
+        }
+        return pressureForce;
     }
 
-    private float CalculatePressure(int particleIndex)
+    private Vector2 GetRandomDirection()
     {
-        // compute p = k * (ρ - ρ0)
-        throw new NotImplementedException();
+        Vector2 dir = new((float)random.NextDouble(), (float)random.NextDouble());
+        return Vector2.Normalize(dir);
     }
 
-    private float CalculateViscosity(int particleIndex)
+    private static float CalculatePressureFromDensity(float density)
     {
-        throw new NotImplementedException();
+        return GasConstant * (density - RestDensity);
     }
 }

@@ -9,11 +9,13 @@ public class Particle
 {
     public Vector2 position;
     public Vector2 velocity;
+    public float density;
 
     public Particle(Vector2 position, Vector2 velocity)
     {
         this.position = position;
         this.velocity = velocity;
+        this.density = 0; // need to repopulate in runtime
     }
 
     public void Update()
