@@ -10,6 +10,9 @@ public class Container
     public readonly Rectangle container;
     public List<Particle> particles;
 
+    public const float RestDensity = 1f;
+    public const float GasConstant = 100;
+
     public Container(int particleCount)
     {
         container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth, ContainerHeight);
@@ -41,6 +44,8 @@ public class Container
 
     public void Update()
     {
+        UpdateParticleVelocities();
+
         foreach (Particle particle in particles)
         {
             particle.Update();
@@ -54,4 +59,34 @@ public class Container
         Raylib.DrawRectangleLinesEx(container, 5, White);
     }
 
+    private void UpdateParticleVelocities()
+    {
+        Parallel.For(0, particles.Count, i =>
+        {
+            Particle particle = particles[i];
+            Vector2 acceleration = CalculateAcceleration(i);
+            particle.velocity += acceleration * FrameTime;
+        });
+    }
+
+    private Vector2 CalculateAcceleration(int particleIndex)
+    {
+        throw new NotImplementedException();   
+    }
+
+    private float CalculateDensity(int particleIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    private float CalculatePressure(int particleIndex)
+    {
+        // compute p = k * (ρ - ρ0)
+        throw new NotImplementedException();
+    }
+
+    private float CalculateViscosity(int particleIndex)
+    {
+        throw new NotImplementedException();
+    }
 }
