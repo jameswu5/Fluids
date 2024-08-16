@@ -9,14 +9,14 @@ public class Container
 {
     public readonly Rectangle container;
     public List<Particle> particles;
-    public const int ParticleCount = 200;
-    public const int SimulationsPerFrame = 2;
+    public const int ParticleCount = 400;
+    public const int SimulationsPerFrame = 3;
     public Random random;
 
     public const float SmoothingRadius = 0.4f;
-    public const float RestDensity = 4;
+    public const float RestDensity = 4f;
     public const float GasConstant = 2f;
-    public const float Viscosity = 0.5f;
+    public const float Viscosity = 0.1f;
     public const float Mass = 1f;
     public static readonly Vector2 Gravity = new(0, Settings.Gravity);
 
@@ -69,7 +69,7 @@ public class Container
         // Draw particles
         foreach (Particle particle in particles)
         {
-            particle.Draw();
+            particle.Draw(coloured: true);
         }
     }
 
@@ -121,7 +121,7 @@ public class Container
         // Pressure
         force += CalculatePressureForce(particleIndex);
         // Gravity
-        force += CalculateExternalForce(particleIndex);
+        force += CalculateExternalForce(particleIndex, gravity: true);
         // Viscosity
         force += CalculateViscosity(particleIndex);
 
@@ -159,9 +159,9 @@ public class Container
         return GasConstant * (density - RestDensity);
     }
 
-    private Vector2 CalculateExternalForce(int particleIndex)
+    private Vector2 CalculateExternalForce(int particleIndex, bool gravity = true)
     {
-        return Gravity;
+        return gravity ? Gravity : Vector2.Zero;
     }
 
     private Vector2 CalculateViscosity(int particleIndex)
