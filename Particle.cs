@@ -20,8 +20,8 @@ public class Particle
 
     public void Draw()
     {
-        int x = (int)(position.X * Scale) + ContainerPaddingX;
-        int y = (int)(position.Y * Scale) + ContainerPaddingY;
+        int x = (int)(position.X * Scale) + ContainerPadding;
+        int y = (int)(position.Y * Scale) + ContainerPadding;
 
         Raylib.DrawCircleV(new Vector2(x, y), ParticleUIRadius, White);
     }

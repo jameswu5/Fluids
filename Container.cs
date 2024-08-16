@@ -9,7 +9,7 @@ public class Container
 {
     public readonly Rectangle container;
     public List<Particle> particles;
-    public const int ParticleCount = 100;
+    public const int ParticleCount = 49;
 
     public Random random;
 
@@ -24,7 +24,7 @@ public class Container
     public Container()
     {
         random = new();
-        container = new Rectangle(ContainerPaddingX, ContainerPaddingY, ContainerWidth * Scale, ContainerHeight * Scale);
+        container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth * Scale, ContainerHeight * Scale);
         particles = CreateParticles(ParticleCount);
     }
 
@@ -127,13 +127,13 @@ public class Container
 
             Vector2 diff = particles[i].position - particles[particleIndex].position;
             float distance = diff.Length();
-            Vector2 direction = distance == 0 ? GetRandomDirection() : diff / distance; // create random vector instead
+            Vector2 direction = distance == 0 ? GetRandomDirection() : Vector2.Normalize(diff); // create random vector instead
             Vector2 gradient = kernel.Derivative(distance, SmoothingRadius) * direction;
             float pressure = (CalculatePressureFromDensity(particles[i].density) + CalculatePressureFromDensity(particles[particleIndex].density)) / 2;
             pressureForce += pressure * gradient * Mass / particles[i].density;
-
         }
-        return -pressureForce;
+
+        return pressureForce;
     }
 
     private Vector2 GetRandomDirection()
