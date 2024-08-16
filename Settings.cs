@@ -15,6 +15,7 @@ public class Settings
     public static readonly Color White = new(235, 235, 235, 255);
 
     public const float Gravity = -9.81f;
+    public const float Dampening = 0.8f;
 
     public const int Scale = 100;
     public const float ParticleRadius = 0.1f;

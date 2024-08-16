@@ -23,7 +23,7 @@ public class Particle
     public void Draw()
     {
         int x = (int)(position.X * Scale) + ContainerPadding;
-        int y = (int)(position.Y * Scale) + ContainerPadding;
+        int y = (int)((ContainerHeight - position.Y) * Scale) + ContainerPadding;
 
         Raylib.DrawCircleV(new Vector2(x, y), ParticleUIRadius, White);
     }
@@ -33,23 +33,23 @@ public class Particle
         if (position.X - ParticleRadius < ContainerBounds[0])
         {
             position.X = ContainerBounds[0] + ParticleRadius;
-            velocity.X *= -1;
+            velocity.X *= -Dampening;
         }
         else if (position.X + ParticleRadius > ContainerBounds[1])
         {
             position.X = ContainerBounds[1] - ParticleRadius;
-            velocity.X *= -1;
+            velocity.X *= -Dampening;
         }
 
         if (position.Y - ParticleRadius < ContainerBounds[2])
         {
             position.Y = ContainerBounds[2] + ParticleRadius;
-            velocity.Y *= -1;
+            velocity.Y *= -Dampening;
         }
         else if (position.Y + ParticleRadius > ContainerBounds[3])
         {
             position.Y = ContainerBounds[3] - ParticleRadius;
-            velocity.Y *= -1;
+            velocity.Y *= -Dampening;
         }
     }
 }

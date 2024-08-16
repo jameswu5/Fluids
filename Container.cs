@@ -9,13 +9,14 @@ public class Container
 {
     public readonly Rectangle container;
     public List<Particle> particles;
-    public const int ParticleCount = 49;
-    public const int SimulationsPerFrame = 5;
+    public const int ParticleCount = 169;
+    public const int SimulationsPerFrame = 2;
     public Random random;
 
     public const float SmoothingRadius = 2f;
-    public const float RestDensity = 1f;
-    public const float GasConstant = 2f;
+    public const float RestDensity = 5;
+    public const float GasConstant = 3f;
+    public const float Viscosity = 0.1f;
     public const float Mass = 1f;
     public static readonly Vector2 Gravity = new(0, Settings.Gravity);
 
@@ -90,7 +91,7 @@ public class Container
         Parallel.For(0, ParticleCount, i =>
         {
             Vector2 force = CalculateResultantForce(i);
-            particles[i].velocity += force * FrameTime / particles[i].density;
+            particles[i].velocity += force * FrameTime;
         });
 
         // Update particle positions
@@ -120,7 +121,9 @@ public class Container
         // Pressure
         force += CalculatePressureForce(particleIndex);
         // Gravity
-        // force -= particles[particleIndex].density * Gravity;
+        force += CalculateExternalForce(particleIndex);
+        // Viscosity
+        force += CalculateViscosity(particleIndex);
 
         return force;
     }
@@ -154,5 +157,27 @@ public class Container
     private static float CalculatePressureFromDensity(float density)
     {
         return GasConstant * (density - RestDensity);
+    }
+
+    private Vector2 CalculateExternalForce(int particleIndex)
+    {
+        return Gravity;
+    }
+
+    private Vector2 CalculateViscosity(int particleIndex)
+    {
+        Vector2 viscosityForce = Vector2.Zero;
+
+        for (int i = 0; i < particles.Count; i++)
+        {
+            Vector2 diff = particles[i].position - particles[particleIndex].position;
+            float distance = diff.Length();
+            Vector2 direction = distance == 0 ? GetRandomDirection() : Vector2.Normalize(diff); // create random vector instead
+            Vector2 laplace = kernel.Derivative(distance, SmoothingRadius) * direction;
+            Vector2 velocityDifference = particles[i].velocity - particles[particleIndex].velocity;
+            viscosityForce += Viscosity * velocityDifference * laplace * Mass / particles[i].density;
+        }
+
+        return viscosityForce;
     }
 }
