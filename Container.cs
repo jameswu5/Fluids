@@ -9,14 +9,14 @@ public class Container
 {
     public readonly Rectangle container;
     public List<Particle> particles;
-    public const int ParticleCount = 169;
+    public const int ParticleCount = 200;
     public const int SimulationsPerFrame = 2;
     public Random random;
 
-    public const float SmoothingRadius = 2f;
-    public const float RestDensity = 5;
-    public const float GasConstant = 3f;
-    public const float Viscosity = 0.1f;
+    public const float SmoothingRadius = 0.4f;
+    public const float RestDensity = 4;
+    public const float GasConstant = 2f;
+    public const float Viscosity = 0.5f;
     public const float Mass = 1f;
     public static readonly Vector2 Gravity = new(0, Settings.Gravity);
 
