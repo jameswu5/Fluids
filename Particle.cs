@@ -20,12 +20,14 @@ public class Particle
         density = 0; // need to repopulate in runtime
     }
 
-    public void Draw()
+    public void Draw(bool coloured = true)
     {
         int x = (int)(position.X * Scale) + ContainerPadding;
         int y = (int)((ContainerHeight - position.Y) * Scale) + ContainerPadding;
 
-        Raylib.DrawCircleV(new Vector2(x, y), ParticleUIRadius, White);
+        Color colour = coloured ? GetGradientColour(velocity.Length()) : White;
+
+        Raylib.DrawCircleV(new Vector2(x, y), ParticleUIRadius, colour);
     }
 
     public void ResolveCollisions()

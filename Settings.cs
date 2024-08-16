@@ -1,9 +1,11 @@
 using System;
+using System.Formats.Asn1;
+using System.Numerics;
 using Raylib_cs;
 
 namespace Fluids;
 
-public class Settings
+public static class Settings
 {
     public const string Name = "Fluids";
     public const int ScreenWidth = 1080;
@@ -13,6 +15,41 @@ public class Settings
 
     public static readonly Color Black = new(30, 30, 30, 255);
     public static readonly Color White = new(235, 235, 235, 255);
+
+    public static readonly Color PastelRed = new(253, 138, 138, 255);
+    public static readonly Color PastelYellow = new(241, 247, 181, 255);
+    public static readonly Color PastelBlue = new(158, 161, 212, 255);
+    public const float GradientMiddleThreshold = 4.0f;
+    public const float GradientUpperThreshold = 6.0f;
+
+    public static Color GetGradientColour(float val)
+    {
+        if (val < 0)
+        {
+            return PastelBlue;
+        }
+        else if (val < GradientMiddleThreshold)
+        {
+            return InterpolateColour(PastelBlue, PastelYellow, val / GradientMiddleThreshold);
+        }
+        else if (val < GradientUpperThreshold)
+        {
+            return InterpolateColour(PastelYellow, PastelRed, (val - GradientMiddleThreshold) / (GradientUpperThreshold - GradientMiddleThreshold));
+        }
+        else
+        {
+            return PastelRed;
+        }
+    }
+
+    private static Color InterpolateColour(Color startColour, Color endColour, float t)
+    {
+        // t has to be between 0 and 1
+        Vector4 start = new(startColour.R, startColour.G, startColour.B, startColour.A);
+        Vector4 end = new(endColour.R, endColour.G, endColour.B, endColour.A);
+        Vector4 result = Vector4.Lerp(start, end, t);
+        return new Color((byte)result.X, (byte)result.Y, (byte)result.Z, (byte)result.W);
+    }
 
     public const float Gravity = -9.81f;
     public const float Dampening = 0.8f;
