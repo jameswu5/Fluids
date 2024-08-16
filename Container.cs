@@ -10,7 +10,7 @@ public class Container
     public readonly Rectangle container;
     public List<Particle> particles;
     public const int ParticleCount = 49;
-
+    public const int SimulationsPerFrame = 5;
     public Random random;
 
     public const float SmoothingRadius = 2f;
@@ -53,7 +53,10 @@ public class Container
 
     public void Update()
     {
-        Step();
+        for (int i = 0; i < SimulationsPerFrame; i++)
+        {
+            Step();
+        }
         Display();
     }
 
@@ -71,10 +74,16 @@ public class Container
 
     private void Step()
     {
+        // Predict positions
+        Parallel.For(0, ParticleCount, i =>
+        {
+            particles[i].predictedPosition = particles[i].position + particles[i].velocity * FrameTime;
+        });
+
         // Precompute particle densities
         Parallel.For(0, ParticleCount, i =>
         {
-            particles[i].density = CalculateDensity(i);
+            particles[i].density = CalculateDensity(particles[i].predictedPosition);
         });
 
         // Update particle forces
@@ -92,12 +101,12 @@ public class Container
         });
     }
 
-    private float CalculateDensity(int particleIndex)
+    private float CalculateDensity(Vector2 point)
     {
         float density = 0f;
         for (int i = 0; i < particles.Count; i++)
         {
-            Vector2 diff = particles[i].position - particles[particleIndex].position;
+            Vector2 diff = particles[i].position - point;
             float distance = diff.Length();
             density += Mass * kernel.Evaluate(distance, SmoothingRadius);
         }
@@ -111,7 +120,7 @@ public class Container
         // Pressure
         force += CalculatePressureForce(particleIndex);
         // Gravity
-        force -= particles[particleIndex].density * Gravity;
+        // force -= particles[particleIndex].density * Gravity;
 
         return force;
     }
