@@ -13,9 +13,9 @@ public class Container
 
     public Random random;
 
-    public const float SmoothingRadius = 100;
+    public const float SmoothingRadius = 2f;
     public const float RestDensity = 1f;
-    public const float GasConstant = 1f;
+    public const float GasConstant = 2f;
     public const float Mass = 1f;
     public static readonly Vector2 Gravity = new(0, Settings.Gravity);
 
@@ -24,11 +24,11 @@ public class Container
     public Container()
     {
         random = new();
-        container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth, ContainerHeight);
+        container = new Rectangle(ContainerPaddingX, ContainerPaddingY, ContainerWidth * Scale, ContainerHeight * Scale);
         particles = CreateParticles(ParticleCount);
     }
 
-    private static List<Particle> CreateParticles(int count, int spacing = 20)
+    private static List<Particle> CreateParticles(int count, float spacing = 0.2f)
     {
         List<Particle> res = new();
 
@@ -36,8 +36,8 @@ public class Container
         int rows = (int)Math.Sqrt(count);
         int cols = (count - 1) / rows + 1;
 
-        int x = ScreenWidth / 2 - (cols * ParticleRadius/ 2) - (cols - 1) * spacing / 2;
-        int y = ScreenHeight / 2 - (rows * ParticleRadius / 2) - (rows - 1) * spacing / 2;
+        float x = ContainerWidth / 2 - (cols * ParticleRadius / 2) - (cols - 1) * spacing / 2;
+        float y = ContainerHeight / 2 - (rows * ParticleRadius / 2) - (rows - 1) * spacing / 2;
 
         for (int i = 0; i < count; i++)
         {
@@ -111,7 +111,7 @@ public class Container
         // Pressure
         force += CalculatePressureForce(particleIndex);
         // Gravity
-        force += particles[particleIndex].density * Gravity;
+        force -= particles[particleIndex].density * Gravity;
 
         return force;
     }
