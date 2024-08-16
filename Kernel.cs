@@ -30,3 +30,16 @@ public class Polynomial : IKernel
         return -945f / (32f * MathF.PI * MathF.Pow(radius, 9)) * distance * MathF.Pow(radius * radius - distance * distance, 2);
     }
 }
+
+public class Spiky : IKernel
+{
+    public float Evaluate(float distance, float radius)
+    {
+        return 15f / (MathF.PI * MathF.Pow(radius, 6)) * MathF.Pow(radius - distance, 3);
+    }
+
+    public float Derivative(float distance, float radius)
+    {
+        return -45f / (MathF.PI * MathF.Pow(radius, 6)) * MathF.Pow(radius - distance, 2);
+    }
+}

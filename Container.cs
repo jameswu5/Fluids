@@ -9,23 +9,22 @@ public class Container
 {
     public readonly Rectangle container;
     public List<Particle> particles;
-    public int ParticleCount;
+    public const int ParticleCount = 100;
 
     public Random random;
 
     public const float SmoothingRadius = 100;
     public const float RestDensity = 1f;
-    public const float GasConstant = 2f;
+    public const float GasConstant = 1f;
     public const float Mass = 1f;
     public static readonly Vector2 Gravity = new(0, Settings.Gravity);
 
     public static readonly IKernel kernel = new Polynomial();
 
-    public Container(int particleCount)
+    public Container()
     {
         random = new();
         container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth, ContainerHeight);
-        ParticleCount = particleCount;
         particles = CreateParticles(ParticleCount);
     }
 
