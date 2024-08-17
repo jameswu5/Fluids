@@ -19,6 +19,14 @@ public static class Settings
     public static readonly Color PastelRed = new(253, 138, 138, 255);
     public static readonly Color PastelYellow = new(241, 247, 181, 255);
     public static readonly Color PastelBlue = new(158, 161, 212, 255);
+
+    public static readonly Color Teal = new(55, 183, 195, 255);
+    public static readonly Color Blue = new(8, 131, 149, 255);
+
+    public static readonly Color Gradient1 = Blue;
+    public static readonly Color Gradient2 = Teal;
+    public static readonly Color Gradient3 = White;
+
     public const float GradientMiddleThreshold = 4.0f;
     public const float GradientUpperThreshold = 6.0f;
 
@@ -26,19 +34,19 @@ public static class Settings
     {
         if (val < 0)
         {
-            return PastelBlue;
+            return Gradient1;
         }
         else if (val < GradientMiddleThreshold)
         {
-            return InterpolateColour(PastelBlue, PastelYellow, val / GradientMiddleThreshold);
+            return InterpolateColour(Gradient1, Gradient2, val / GradientMiddleThreshold);
         }
         else if (val < GradientUpperThreshold)
         {
-            return InterpolateColour(PastelYellow, PastelRed, (val - GradientMiddleThreshold) / (GradientUpperThreshold - GradientMiddleThreshold));
+            return InterpolateColour(Gradient2, Gradient3, (val - GradientMiddleThreshold) / (GradientUpperThreshold - GradientMiddleThreshold));
         }
         else
         {
-            return PastelRed;
+            return Gradient3;
         }
     }
 

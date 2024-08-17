@@ -10,7 +10,7 @@ public class Container
     public readonly Rectangle container;
     public List<Particle> particles;
     public const int ParticleCount = 400;
-    public const int SimulationsPerFrame = 3;
+    public const int SimulationsPerFrame = 2;
     public Random random;
 
     public const float SmoothingRadius = 0.4f;
@@ -135,7 +135,7 @@ public class Container
 
         // Pressure
         force += CalculatePressureForce(particleIndex);
-        // Gravity
+        // External forces
         force += CalculateExternalForce(particleIndex, gravity: true);
         // Viscosity
         force += CalculateViscosity(particleIndex);
