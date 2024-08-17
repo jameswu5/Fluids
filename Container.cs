@@ -10,7 +10,7 @@ public class Container
     public readonly Rectangle container;
     public List<Particle> particles;
     public const int ParticleCount = 400;
-    public const int SimulationsPerFrame = 2;
+    public const int SimulationsPerFrame = 3;
     public Random random;
 
     public const float SmoothingRadius = 0.4f;
@@ -20,7 +20,9 @@ public class Container
     public const float Mass = 1f;
     public static readonly Vector2 Gravity = new(0, Settings.Gravity);
 
-    public static readonly IKernel kernel = new Polynomial();
+    public static readonly Kernel DensityKernel = Kernel.Create(Kernel.Type.Polynomial);
+    public static readonly Kernel PressureKernel = Kernel.Create(Kernel.Type.Spiky);
+    public static readonly Kernel ViscosityKernel = Kernel.Create(Kernel.Type.Viscous);
 
     public const float MouseForce = 5 * 9.81f;
     public const float MouseRadius = 1f;
@@ -124,7 +126,7 @@ public class Container
         {
             Vector2 diff = particles[i].position - point;
             float distance = diff.Length();
-            density += Mass * kernel.Evaluate(distance, SmoothingRadius);
+            density += Mass * DensityKernel.Evaluate(distance, SmoothingRadius);
         }
         return density;
     }
@@ -155,7 +157,7 @@ public class Container
             Vector2 diff = particles[i].position - particles[particleIndex].position;
             float distance = diff.Length();
             Vector2 direction = distance == 0 ? GetRandomDirection() : Vector2.Normalize(diff); // create random vector instead
-            Vector2 gradient = kernel.Derivative(distance, SmoothingRadius) * direction;
+            Vector2 gradient = PressureKernel.Derivative(distance, SmoothingRadius) * direction;
             float pressure = (CalculatePressureFromDensity(particles[i].density) + CalculatePressureFromDensity(particles[particleIndex].density)) / 2;
             pressureForce += pressure * gradient * Mass / particles[i].density;
         }
@@ -201,7 +203,7 @@ public class Container
             Vector2 diff = particles[i].position - particles[particleIndex].position;
             float distance = diff.Length();
             Vector2 direction = distance == 0 ? GetRandomDirection() : Vector2.Normalize(diff); // create random vector instead
-            Vector2 laplace = kernel.Derivative(distance, SmoothingRadius) * direction;
+            Vector2 laplace = ViscosityKernel.Laplacian(distance, SmoothingRadius) * direction;
             Vector2 velocityDifference = particles[i].velocity - particles[particleIndex].velocity;
             viscosityForce += Viscosity * velocityDifference * laplace * Mass / particles[i].density;
         }
