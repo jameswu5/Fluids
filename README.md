@@ -7,7 +7,7 @@ To run this project, clone it and enter `dotnet run` in the terminal. If you enc
 
 ## Formulating Acceleration
 
-When we simulate fluids computationally, we are forced to employ an Eulerian (grid based) approach, as we are forced to represent our space discretely. Thus, assuming temperature remains constant, fluids can be described by a velocity field $ v$, density field $\rho$ and a pressure field $p$. These quantities over time are governed by the following equations:
+When we simulate fluids computationally, we are forced to employ an Eulerian (grid based) approach, as we are forced to represent our space discretely. Thus, assuming temperature remains constant, fluids can be described by a velocity field $v$, density field $\rho$ and a pressure field $p$. These quantities over time are governed by the following equations:
 
 Conservation of mass:
     
@@ -24,7 +24,7 @@ $$
 
 Conveniently, since we model with a fixed number of particles of constant mass, mass is always conserved, and we do not need to worry about equation $(1)$ at all.
 
-Note that the term $\frac{\partial  v}{\partial t} +  v \cdot \nabla  v$ is the substantial derivative, but as the particles move with the fluid this is simply the time derivative which means $ v \cdot \nabla  v$ vanishes. Therefore, with a little rearranging of $(2)$, we have the acceleration being
+Note that the term $\frac{\partial  v}{\partial t} +  v \cdot \nabla  v$ is the substantial derivative, but as the particles move with the fluid this is simply the time derivative which means $v \cdot \nabla  v$ vanishes. Therefore, with a little rearranging of $(2)$, we have the acceleration being
 
 $$
  a = \frac{\text d v}{\text dt} = \frac{-\nabla p + \rho g + \mu \nabla^2  v }{\rho}
@@ -36,7 +36,7 @@ All that is left is to evaluate these quantities at the location of each particl
 
 ## Smoothing Kernels
 
-Since fluids take place in a continuous space in reality, and we are constrained to using a discrete space, we can mimic the properties of continuous space with interpolation. By using Smoothed Particle Hydrodynamics, we can evaluate a quantity $A$ at a point $ r$ by computing the weighted sum of contributions from all particles:
+Since fluids take place in a continuous space in reality, and we are constrained to using a discrete space, we can mimic the properties of continuous space with interpolation. By using Smoothed Particle Hydrodynamics, we can evaluate a quantity $A$ at a point $r$ by computing the weighted sum of contributions from all particles:
 
 $$
 A( r) = \sum_{j=1}^N m_j \frac{A_j}{\rho_j}W( r -  r_j, h)\qquad{(3)}
