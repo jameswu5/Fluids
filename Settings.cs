@@ -61,7 +61,7 @@ public static class Settings
     public const float Gravity = -9.81f;
     public const float Dampening = 0.4f;
 
-    public const int Scale = 80;
+    public const int Scale = 100;
     public const float ParticleRadius = 0.1f;
     public const int ParticleUIRadius = (int)(ParticleRadius * Scale);
 
