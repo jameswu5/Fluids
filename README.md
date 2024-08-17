@@ -1,6 +1,10 @@
 # Fluids
 This project is an implementation of the concepts explored in this widely cited [paper](https://matthias-research.github.io/pages/publications/sca03.pdf) exploring particle-based fluid simulation. The main idea in this simulation is to calculate the acceleration of each particle at each step in time, and update the velocities and positions accordingly.
 
+![simulation](static/demo.gif)
+
+To run this project, clone it and enter `dotnet run` in the terminal. If you encounter a `Raylib_cs` not found error, then enter `dotnet add package Raylib-cs` in the terminal to install the package.
+
 ## Formulating Acceleration
 
 When we simulate fluids computationally, we are forced to employ an Eulerian (grid based) approach, as we are forced to represent our space discretely. Thus, assuming temperature remains constant, fluids can be described by a velocity field $ v$, density field $\rho$ and a pressure field $p$. These quantities over time are governed by the following equations:
@@ -8,7 +12,7 @@ When we simulate fluids computationally, we are forced to employ an Eulerian (gr
 Conservation of mass:
     
 $$
-\frac{\partial \rho}{\partial t} + \text{div}(\rho  v) = 0 \qquad(1)
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho  v) = 0 \qquad(1)
 $$
     
 Conservation of momentum (formulated by the Navier-Stokes equation):
@@ -86,4 +90,9 @@ $$
 \mu\sum_{j=1}^Nm_j \frac{ v_j -  v_i}{\rho_j}\nabla^2W( r_i- r_j, h)
 $$
 
-## Results
+## Resources
+
+[Coding Adventure: Simulating Fluids (Sebastian Lague)](https://www.youtube.com/watch?v=rSKMYc1CQHE)
+
+[Particle-Based Fluid Simulation for Interactive Applications (M. Müller, D. Charypar and M. Gross)](https://matthias-research.github.io/pages/publications/sca03.pdf)
+
