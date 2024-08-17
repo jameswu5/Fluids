@@ -14,7 +14,7 @@ public class Container
     public Random random;
 
     public const float SmoothingRadius = 0.4f;
-    public const float RestDensity = 4f;
+    public const float RestDensity = 10f;
     public const float GasConstant = 2f;
     public const float Viscosity = 0.1f;
     public const float Mass = 1f;
@@ -22,11 +22,19 @@ public class Container
 
     public static readonly IKernel kernel = new Polynomial();
 
+    public const float MouseForce = 5 * 9.81f;
+    public const float MouseRadius = 1f;
+    public Vector2 mouseLocation;
+    public int mouseForceActive; // -1 for negative, 0 for none, 1 for positive
+
     public Container()
     {
         random = new();
         container = new Rectangle(ContainerPadding, ContainerPadding, ContainerWidth * Scale, ContainerHeight * Scale);
         particles = CreateParticles(ParticleCount);
+
+        mouseLocation = Vector2.Zero;
+        mouseForceActive = 0;
     }
 
     private static List<Particle> CreateParticles(int count, float spacing = 0.2f)
@@ -70,6 +78,13 @@ public class Container
         foreach (Particle particle in particles)
         {
             particle.Draw(coloured: true);
+        }
+
+        // Draw mouse force
+        if (mouseForceActive != 0)
+        {
+            Console.WriteLine(mouseLocation);
+            Raylib.DrawCircleLines(ContainerPadding + (int)(mouseLocation.X * Scale), ContainerPadding + (int)((ContainerHeight - mouseLocation.Y) * Scale), (int)(MouseRadius * Scale), White);
         }
     }
 
@@ -161,7 +176,20 @@ public class Container
 
     private Vector2 CalculateExternalForce(int particleIndex, bool gravity = true)
     {
-        return gravity ? Gravity : Vector2.Zero;
+        // Gravity
+        Vector2 externalForce = gravity ? Gravity : Vector2.Zero;
+        // Mouse force
+        if (mouseForceActive != 0)
+        {
+            Vector2 diff = mouseLocation - particles[particleIndex].position;
+            float distance = diff.Length();
+            if (distance <= MouseRadius)
+            {
+                externalForce += MouseForce * diff * mouseForceActive / distance;
+            }
+        }
+
+        return externalForce;
     }
 
     private Vector2 CalculateViscosity(int particleIndex)
